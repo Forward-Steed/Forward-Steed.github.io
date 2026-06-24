@@ -622,6 +622,10 @@ body {
 .hero-name-back .char:nth-child(3) { animation-delay: 0.7s; }
 
 @keyframes charFlipIn {
+  from {
+    opacity: 0;
+    transform: translateY(80px) rotateX(90deg);
+  }
   to {
     opacity: 1;
     transform: translateY(0) rotateX(0deg);

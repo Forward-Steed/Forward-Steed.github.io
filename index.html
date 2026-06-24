@@ -380,9 +380,9 @@ body {
   height: 100%;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.3) 0%,
-    rgba(0, 0, 0, 0.4) 50%,
-    rgba(0, 0, 0, 0.5) 100%
+    rgba(0, 0, 0, 0.1) 0%,
+    rgba(0, 0, 0, 0.15) 50%,
+    rgba(0, 0, 0, 0.25) 100%
   );
   z-index: 1;
   animation: overlayPulse 8s ease-in-out infinite;
@@ -4629,7 +4629,23 @@ window.addEventListener('beforeunload', function() {
       float g = 0.05 / abs(p.y + sin((gx + time) * xScale) * yScale);
       float b = 0.05 / abs(p.y + sin((bx + time) * xScale) * yScale);
       
-      gl_FragColor = vec4(r, g, b, 1.0);
+      // 增强色散效果：添加彩虹流光
+      vec3 color = vec3(r, g, b);
+      
+      // 添加彩虹色相偏移
+      float hueShift = sin(p.x * 2.0 + time * 0.5) * 0.15;
+      color.r += hueShift;
+      color.b -= hueShift;
+      
+      // 添加中心发光
+      float glow = 0.02 / (length(p) + 0.1);
+      color += vec3(glow * 0.8, glow * 0.6, glow * 1.0);
+      
+      // 添加流光扫描线
+      float scanline = sin(p.x * 3.0 - time * 2.0) * 0.5 + 0.5;
+      color += vec3(scanline * 0.03, scanline * 0.02, scanline * 0.04);
+      
+      gl_FragColor = vec4(color, 1.0);
     }
   `;
 
@@ -4680,9 +4696,9 @@ window.addEventListener('beforeunload', function() {
       distortion: gl.getUniformLocation(program, 'distortion'),
     };
 
-    gl.uniform1f(uniforms.xScale, 1.0);
-    gl.uniform1f(uniforms.yScale, 0.5);
-    gl.uniform1f(uniforms.distortion, 0.05);
+    gl.uniform1f(uniforms.xScale, 1.2);
+    gl.uniform1f(uniforms.yScale, 0.35);
+    gl.uniform1f(uniforms.distortion, 0.12);
 
     handleResize();
     animate();

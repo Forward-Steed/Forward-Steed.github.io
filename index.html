@@ -731,6 +731,136 @@ body {
   transform: translateY(-2px);
 }
 
+/* ========== 玻璃拟态按钮 (Liquid Glass Button) ========== */
+.btn-glass {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 2.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-radius: 50px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.1, 0.4, 0.2, 1), box-shadow 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.18);
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  background: rgba(255,255,255,0.03);
+  box-shadow:
+    0 4px 30px rgba(0,0,0,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+/* 玻璃高光层 */
+.btn-glass::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 40%;
+  border-radius: 50px 50px 0 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.05) 100%);
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity 0.3s ease;
+}
+
+/* 玻璃底层折射 */
+.btn-glass::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  border-radius: 50px;
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+  z-index: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.btn-glass:hover {
+  transform: scale(1.05);
+  border-color: rgba(255,255,255,0.3);
+  box-shadow:
+    0 8px 40px rgba(0,0,0,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+.btn-glass:hover::before {
+  background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.08) 100%);
+}
+
+.btn-glass:active {
+  transform: scale(0.97);
+}
+
+.btn-glass-text {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+  font-weight: 500;
+}
+
+/* 扫光动画层 */
+.btn-glass-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: 50px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.btn-glass-shine::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.8s ease;
+}
+
+.btn-glass:hover .btn-glass-shine::before {
+  left: 150%;
+}
+
+/* 主按钮 - 强调色玻璃 */
+.btn-glass-primary {
+  background: rgba(212, 118, 10, 0.2);
+  border-color: rgba(212, 118, 10, 0.4);
+  color: #fff;
+}
+
+.btn-glass-primary::after {
+  background: linear-gradient(135deg, rgba(212,118,10,0.15) 0%, rgba(212,118,10,0.05) 100%);
+}
+
+.btn-glass-primary:hover {
+  background: rgba(212, 118, 10, 0.3);
+  border-color: rgba(212, 118, 10, 0.6);
+  box-shadow: 0 8px 32px rgba(212, 118, 10, 0.25);
+}
+
+/* 描边按钮 - 透明玻璃 */
+.btn-glass-outline {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255,255,255,0.85);
+}
+
+.btn-glass-outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: rgba(255,255,255,0.35);
+}
+
 /* 滚动指示器 */
 .scroll-indicator {
   position: absolute;
@@ -3382,6 +3512,19 @@ body {
 </nav>
 
 <section class="hero" id="hero">
+  <!-- SVG Glass Filter for Liquid Button -->
+  <svg class="hidden" style="position:absolute;width:0;height:0;" aria-hidden="true">
+    <defs>
+      <filter id="container-glass" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+        <feTurbulence type="fractalNoise" baseFrequency="0.05 0.05" numOctaves="1" seed="1" result="turbulence"/>
+        <feGaussianBlur in="turbulence" stdDeviation="2" result="blurredNoise"/>
+        <feDisplacementMap in="SourceGraphic" in2="blurredNoise" scale="70" xChannelSelector="R" yChannelSelector="B" result="displaced"/>
+        <feGaussianBlur in="displaced" stdDeviation="4" result="finalBlur"/>
+        <feComposite in="finalBlur" in2="finalBlur" operator="over"/>
+      </filter>
+    </defs>
+  </svg>
+
   <!-- WebGL Shader Background -->
   <canvas id="heroShaderCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;"></canvas>
   <div class="hero-video-overlay" style="z-index:1;"></div>
@@ -3408,8 +3551,14 @@ body {
     <p class="hero-role" id="typewriterText"><span class="cursor"></span></p>
     <p class="hero-quote">用镜头雕刻时光，以技术驱动创意</p>
     <div class="hero-buttons">
-      <a href="#projects" class="btn btn-primary">查看作品</a>
-      <a href="#contact" class="btn btn-outline">联系我</a>
+      <a href="#projects" class="btn-glass btn-glass-primary">
+        <span class="btn-glass-shine"></span>
+        <span class="btn-glass-text">查看作品</span>
+      </a>
+      <a href="#contact" class="btn-glass btn-glass-outline">
+        <span class="btn-glass-shine"></span>
+        <span class="btn-glass-text">联系我</span>
+      </a>
     </div>
   </div>
 

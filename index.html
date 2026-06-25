@@ -1204,26 +1204,89 @@ body {
 
 /* ========== 项目经历 - 一级页面 ========== */
 /* ========== 项目分类网格 — Pentagram 直排架构 ========== */
+/* ========== Display Cards 堆叠卡片风格 — 一级页面 ========== */
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 0;
-  border: 1.5px solid var(--border);
+  grid-template-columns: 1fr;
+  grid-template-areas: "stack";
+  place-items: center;
+  min-height: 420px;
+  padding: 2rem 0;
 }
 
+/* 堆叠卡片基础样式 */
 .project-category-card {
-  background: var(--ground);
-  border-right: 1.5px solid var(--border);
-  border-bottom: 1.5px solid var(--border);
+  grid-area: stack;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
   position: relative;
-  border-radius: 0;
   display: flex;
   flex-direction: column;
-  will-change: background-color, color;
-  grid-column: span 4;
+  width: 100%;
+  max-width: 520px;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+              filter 0.5s ease,
+              opacity 0.5s ease;
+  will-change: transform, filter;
+}
+
+/* 堆叠层次感 — 三张卡片偏移 */
+.project-category-card:nth-child(1) {
+  transform: translate(0, 0);
+  z-index: 3;
+}
+.project-category-card:nth-child(2) {
+  transform: translate(40px, 30px);
+  z-index: 2;
+}
+.project-category-card:nth-child(3) {
+  transform: translate(80px, 60px);
+  z-index: 1;
+}
+
+/* 灰度遮罩层 */
+.project-category-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ground);
+  opacity: 0.2;
+  z-index: 5;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  border-radius: 16px;
+}
+
+/* 悬停时移除遮罩 */
+.project-category-card:hover::before {
+  opacity: 0;
+}
+
+/* 悬停上浮效果 */
+.project-category-card:hover {
+  transform: translate(0, -20px) scale(1.02);
+  filter: grayscale(0);
+  z-index: 10;
+}
+
+/* 悬停时其他卡片推后 */
+.projects-grid:has(.project-category-card:nth-child(1):hover) .project-category-card:nth-child(2),
+.projects-grid:has(.project-category-card:nth-child(1):hover) .project-category-card:nth-child(3) {
+  transform: translate(40px, 30px) scale(0.97);
+  opacity: 0.75;
+}
+.projects-grid:has(.project-category-card:nth-child(2):hover) .project-category-card:nth-child(1),
+.projects-grid:has(.project-category-card:nth-child(2):hover) .project-category-card:nth-child(3) {
+  transform: translate(0, 0) scale(0.97);
+  opacity: 0.75;
+}
+.projects-grid:has(.project-category-card:nth-child(3):hover) .project-category-card:nth-child(1),
+.projects-grid:has(.project-category-card:nth-child(3):hover) .project-category-card:nth-child(2) {
+  transform: translate(40px, 30px) scale(0.97);
+  opacity: 0.75;
 }
 
 /* 顶部色块区域 — 图标居中 */
@@ -1233,7 +1296,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--ground);
+  background: var(--card);
   border-bottom: 1.5px solid var(--border);
   overflow: hidden;
 }
@@ -1245,6 +1308,11 @@ body {
   opacity: 1;
   position: relative;
   z-index: 2;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.project-category-card:hover .project-card-icon {
+  transform: scale(1.1);
 }
 
 .project-card-icon svg {
@@ -1255,10 +1323,12 @@ body {
 
 /* 内容区域 */
 .project-card-content {
-  padding: 1.5rem 1.25rem 1.75rem;
+  padding: 1.5rem 1.5rem 1.75rem;
   flex: 1;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 6;
 }
 
 .project-card-meta {
@@ -1317,52 +1387,52 @@ body {
   text-transform: uppercase;
   border-top: 1.5px solid var(--border);
   padding-top: 0.75rem;
+  transition: border-color 0.3s ease;
 }
 
 .project-card-arrow svg {
   width: 18px;
   height: 18px;
   stroke-width: 2;
+  transition: transform 0.3s ease;
 }
 
-/* Hover效果 — 反色切换，图标保持可见 */
-.project-category-card:hover {
-  background: var(--ink);
-  color: var(--ground);
-}
-
-.project-category-card:hover .project-card-icon {
-  color: var(--accent);
-}
-
-.project-category-card:hover .project-card-visual {
-  background: var(--ink);
-}
-
-.project-category-card:hover .project-card-title {
-  color: var(--ground);
-}
-
-.project-category-card:hover .project-card-desc {
-  color: rgba(244, 241, 231, 0.8);
-}
-
-.project-category-card:hover .project-card-count {
-  color: rgba(244, 241, 231, 0.6);
-}
-
-.project-category-card:hover .project-card-arrow {
-  border-top-color: var(--accent);
+.project-category-card:hover .project-card-arrow svg {
+  transform: translateX(4px);
 }
 
 /* 响应式 */
 @media (max-width: 960px) {
   .projects-grid {
-    grid-template-columns: repeat(1, 1fr);
+    min-height: 380px;
+    padding: 1.5rem 0;
   }
   .project-category-card {
-    grid-column: span 1;
-    border-right: none;
+    max-width: 90vw;
+  }
+  .project-category-card:nth-child(1) {
+    transform: translate(0, 0);
+  }
+  .project-category-card:nth-child(2) {
+    transform: translate(20px, 20px);
+  }
+  .project-category-card:nth-child(3) {
+    transform: translate(40px, 40px);
+  }
+  .project-category-card:hover {
+    transform: translate(0, -15px) scale(1.02);
+  }
+}
+
+@media (max-width: 640px) {
+  .projects-grid {
+    min-height: 340px;
+  }
+  .project-category-card:nth-child(2) {
+    transform: translate(12px, 12px);
+  }
+  .project-category-card:nth-child(3) {
+    transform: translate(24px, 24px);
   }
 }
 
@@ -1397,13 +1467,13 @@ body {
   max-width: 100vw;
   height: 100%;
   overflow-y: auto;
-  border-radius: 0;
+  border-radius: 20px 0 0 20px;
   transform: translateX(100%);
   opacity: 1;
-  transition: transform 0.45s ease;
+  transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
-  box-shadow: none;
-  border-left: 1.5px solid var(--ink);
+  box-shadow: -20px 0 60px rgba(0,0,0,0.15);
+  border-left: 1.5px solid var(--border);
   will-change: transform;
 }
 
@@ -1533,29 +1603,39 @@ body {
   max-height: 800px;
 }
 
+/* ========== Display Cards 风格 — 二级页面列表项 ========== */
 .category-project-item {
-  padding: 1rem 2rem 1rem 3rem;
+  margin: 0.5rem 1.5rem;
+  padding: 1rem 1.25rem;
   display: flex;
   align-items: center;
   gap: 1rem;
   cursor: pointer;
-  border-top: 1px solid var(--border);
-  transition: background 0.2s ease;
+  background: var(--ground);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1),
+              background 0.3s ease,
+              box-shadow 0.3s ease;
 }
 
 .category-project-item:hover {
-  background: var(--bg);
-}
-
-.category-project-item:first-child {
-  border-top: none;
+  background: var(--card);
+  transform: translateX(8px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
 .category-project-index {
   font-family: var(--font-mono);
   font-size: 0.6rem;
   color: var(--accent);
-  min-width: 20px;
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--border);
+  border-radius: 6px;
 }
 
 .category-project-title {
@@ -1571,34 +1651,43 @@ body {
   letter-spacing: 0.1em;
 }
 
-/* 简单项目列表（无子分类） */
+/* 简单项目列表（无子分类） — Display Cards 风格 */
 .project-simple-list {
-  border-bottom: 1.5px solid var(--border);
+  padding: 0.5rem 0;
 }
 
 .project-simple-item {
-  padding: 1rem 2rem;
+  margin: 0.5rem 1.5rem;
+  padding: 1rem 1.25rem;
   display: flex;
   align-items: center;
   gap: 1rem;
   cursor: pointer;
-  border-top: 1.5px solid var(--border);
-  transition: background 0.2s ease;
-}
-
-.project-simple-item:first-child {
-  border-top: none;
+  background: var(--ground);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1),
+              background 0.3s ease,
+              box-shadow 0.3s ease;
 }
 
 .project-simple-item:hover {
   background: var(--card);
+  transform: translateX(8px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
 .project-simple-index {
   font-family: var(--font-mono);
   font-size: 0.6rem;
   color: var(--accent);
-  min-width: 20px;
+  min-width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--border);
+  border-radius: 6px;
 }
 
 .project-simple-title {
@@ -1653,11 +1742,12 @@ body {
   max-width: 100vw;
   height: 100%;
   overflow-y: auto;
-  border-radius: 0;
+  border-radius: 20px 0 0 20px;
   transform: translateX(100%);
-  transition: transform 0.45s ease;
+  transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
-  border-left: 1.5px solid var(--ink);
+  border-left: 1.5px solid var(--border);
+  box-shadow: -20px 0 60px rgba(0,0,0,0.15);
 }
 
 .modal-overlay.active .modal-content {

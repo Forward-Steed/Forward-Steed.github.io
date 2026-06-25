@@ -3630,6 +3630,21 @@ body {
 .lamp-wrapper {
   position: relative;
   overflow: visible;
+  background: #0a0a0a;
+}
+
+/* lamp-wrapper 内的 section 使用深色适配 */
+.lamp-wrapper .section {
+  color: #e0e0e0;
+}
+
+.lamp-wrapper .section-header .section-title,
+.lamp-wrapper .section-header .section-number {
+  color: #ffffff;
+}
+
+.lamp-wrapper .section-divider {
+  border-color: rgba(255,255,255,0.15);
 }
 
 .lamp-container {
@@ -3824,6 +3839,15 @@ body {
   </div>
 </section>
 
+<!-- Lamp 滚动交互背景 — 从 education 到 guestbook -->
+<div class="lamp-wrapper" id="lampWrapper">
+  <div class="lamp-container" id="lampContainer">
+    <div class="lamp" id="lampStrip"></div>
+    <div class="lamp-beam" id="lampBeam"></div>
+    <div class="lamp-glow" id="lampGlow"></div>
+    <div class="lamp-halo" id="lampHalo"></div>
+  </div>
+
 <section class="section" id="education">
   <div class="section-header reveal">
     <div class="section-number">02 / 教育</div>
@@ -3978,14 +4002,6 @@ body {
   </div>
 </section>
 
-<!-- Lamp 滚动交互背景 — 从 honors 到 guestbook -->
-<div class="lamp-wrapper" id="lampWrapper">
-  <div class="lamp-container" id="lampContainer">
-    <div class="lamp" id="lampStrip"></div>
-    <div class="lamp-beam" id="lampBeam"></div>
-    <div class="lamp-glow" id="lampGlow"></div>
-    <div class="lamp-halo" id="lampHalo"></div>
-  </div>
 
 <section class="section" id="honors">
   <div class="section-header reveal">

@@ -1235,10 +1235,9 @@ body {
   box-shadow: 0 4px 24px rgba(0,0,0,0.05);
 }
 
-/* 固定层叠顺序 — z-index永不在hover时变化 */
-.project-category-card:nth-child(1) { z-index: 3; }
-.project-category-card:nth-child(2) { z-index: 2; }
-.project-category-card:nth-child(3) { z-index: 1; }
+/* hover时置顶 — z-index提升，transition中不包含z-index避免抽搐 */
+.project-category-card { z-index: 1; }
+.project-category-card:hover { z-index: 10; }
 
 /* 堆叠层次感 — 大间距+轻微倾角，参考图中扇形展开 */
 .project-category-card:nth-child(1) {

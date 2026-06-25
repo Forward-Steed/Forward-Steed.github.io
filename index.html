@@ -4972,7 +4972,7 @@ function openModal(key) {
         '<div class="video-lazy-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg></div>' +
         '<div class="video-lazy-text">点击加载视频</div>' +
         '</div>' +
-        '<video id="' + videoId + '" controls preload="none" style="display:none;"></video>' +
+        '<video id="' + videoId + '" controls preload="metadata" style="display:none;"></video>' +
         (label ? '<div class="video-label">' + label + '</div>' : '') +
         '</div>';
     });
@@ -4984,7 +4984,7 @@ function openModal(key) {
       '<div class="video-lazy-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg></div>' +
       '<div class="video-lazy-text">点击加载视频</div>' +
       '</div>' +
-      '<video id="' + videoId + '" class="modal-video-full" controls preload="none" style="display:none;"></video>';
+      '<video id="' + videoId + '" class="modal-video-full" controls preload="metadata" style="display:none;"></video>';
   }
 
   // 元数据网格
@@ -5015,13 +5015,9 @@ function loadLazyVideo(placeholder) {
   video.removeAttribute('src');
   video.innerHTML = '';
   video.src = videoSrc;
+  video.muted = false;
+  video.volume = 1;
   video.load();
-
-  // 确保音频轨道可用
-  video.addEventListener('loadedmetadata', function() {
-    video.muted = false;
-    video.volume = 1;
-  }, { once: true });
 
   // 隐藏占位符，显示视频
   placeholder.style.display = 'none';

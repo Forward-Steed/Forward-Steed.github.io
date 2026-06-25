@@ -1247,18 +1247,21 @@ body {
   transform: translate(72px, 60px);
 }
 
-/* 遮罩层 — 官方参数: bg-background/50 + blend-overlay */
+/* 遮罩层 — 从 peek 标签下方开始 */
 .project-category-card::before {
   content: '';
   position: absolute;
-  inset: 0;
+  top: 48px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: var(--ground);
   opacity: 0.5;
   mix-blend-mode: overlay;
   z-index: 1;
-  transition: opacity 0.7s ease;
+  transition: opacity 0.7s ease, top 0.35s ease;
   pointer-events: none;
-  border-radius: 16px;
+  border-radius: 0 0 16px 16px;
 }
 
 /* 悬停时移除遮罩 + 恢复彩色 */
@@ -1284,6 +1287,50 @@ body {
 }
 
 /* 顶部色块区域 — 图标居中 */
+
+/* Peek 标签 — 堆叠时始终可见的分类名称，悬停时隐藏 */
+.project-card-peek {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 1.25rem 0.75rem;
+  z-index: 2;
+  background: var(--card);
+  border-bottom: 1.5px solid var(--border);
+  border-radius: 16px 16px 0 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.project-category-card:hover .project-card-peek {
+  opacity: 0;
+}
+
+.project-card-peek-tag {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  color: var(--ground);
+  background: var(--ink);
+  text-transform: uppercase;
+  padding: 0.25rem 0.5rem;
+  flex-shrink: 0;
+}
+
+.project-card-peek-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
 .project-card-visual {
   position: relative;
   height: 140px;
@@ -3749,6 +3796,10 @@ body {
   </div>
   <div class="projects-grid">
     <div class="project-category-card reveal" data-category="early" onclick="openProjectPanel('early')">
+      <div class="project-card-peek">
+        <span class="project-card-peek-tag">学生时代</span>
+        <h3 class="project-card-peek-title">早期项目</h3>
+      </div>
       <div class="project-card-visual">
         <div class="project-card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -3773,6 +3824,10 @@ body {
       </div>
     </div>
     <div class="project-category-card reveal" data-category="work" onclick="openProjectPanel('work')">
+      <div class="project-card-peek">
+        <span class="project-card-peek-tag">商业实战</span>
+        <h3 class="project-card-peek-title">工作项目</h3>
+      </div>
       <div class="project-card-visual">
         <div class="project-card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -3798,6 +3853,10 @@ body {
       </div>
     </div>
     <div class="project-category-card reveal" data-category="ai" onclick="openProjectPanel('ai')">
+      <div class="project-card-peek">
+        <span class="project-card-peek-tag">AI探索</span>
+        <h3 class="project-card-peek-title">个人AI项目</h3>
+      </div>
       <div class="project-card-visual">
         <div class="project-card-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">

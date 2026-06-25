@@ -1204,14 +1204,13 @@ body {
 
 /* ========== 项目经历 - 一级页面 ========== */
 /* ========== 项目分类网格 — Pentagram 直排架构 ========== */
-/* ========== Display Cards 堆叠卡片风格 — 一级页面 ========== */
-/* 根治抽搐：固定z-index，hover时不改变；非hover卡片仅opacity变化 */
+/* ========== Display Cards — 严格遵循 21st.dev 官方组件参数 ========== */
 .projects-grid {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-areas: "stack";
   place-items: center;
-  min-height: 480px;
+  min-height: 400px;
   padding: 2.5rem 0;
 }
 
@@ -1228,61 +1227,65 @@ body {
   flex-direction: column;
   width: 100%;
   max-width: 520px;
-  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1),
-              opacity 0.45s ease,
-              box-shadow 0.45s ease;
+  transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1),
+              filter 0.7s ease,
+              box-shadow 0.7s ease;
   will-change: transform;
   box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+  /* 默认灰度 */
+  filter: grayscale(100%);
 }
 
-/* hover时置顶 — z-index提升，transition中不包含z-index避免抽搐 */
+/* hover时置顶 */
 .project-category-card { z-index: 1; }
 .project-category-card:hover { z-index: 10; }
 
-/* 堆叠层次感 — 大间距+轻微倾角，参考图中扇形展开 */
+/* 堆叠层次感 — 官方参数: translate-x-12/y-10, translate-x-24/y-20 */
 .project-category-card:nth-child(1) {
-  transform: translate(0, 0) rotate(-0.5deg);
+  transform: translate(0, 0);
 }
 .project-category-card:nth-child(2) {
-  transform: translate(85px, 55px) rotate(-2.5deg);
+  transform: translate(48px, 40px);
 }
 .project-category-card:nth-child(3) {
-  transform: translate(170px, 110px) rotate(-4.5deg);
+  transform: translate(96px, 80px);
 }
 
-/* 灰度遮罩层 */
+/* 遮罩层 — 官方参数: bg-background/50 + blend-overlay */
 .project-category-card::before {
   content: '';
   position: absolute;
   inset: 0;
   background: var(--ground);
-  opacity: 0.15;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
   z-index: 1;
-  transition: opacity 0.45s ease;
+  transition: opacity 0.7s ease;
   pointer-events: none;
   border-radius: 16px;
 }
 
-/* 悬停时移除遮罩 */
+/* 悬停时移除遮罩 + 恢复彩色 */
 .project-category-card:hover::before {
   opacity: 0;
 }
+.project-category-card:hover {
+  filter: grayscale(0%);
+}
 
-/* 悬停出列 — 大幅向左上方跳出堆叠，完全可见 */
+/* 悬停出列 — 官方参数: -translate-y-10, -translate-y-1, translate-y-10 */
 .project-category-card:nth-child(1):hover {
-  transform: translate(-70px, -70px) scale(1.08) rotate(0deg);
+  transform: translate(0, -40px);
   box-shadow: 0 32px 64px rgba(0,0,0,0.14), 0 12px 24px rgba(0,0,0,0.08);
 }
 .project-category-card:nth-child(2):hover {
-  transform: translate(-35px, -30px) scale(1.08) rotate(0deg);
+  transform: translate(48px, -4px);
   box-shadow: 0 32px 64px rgba(0,0,0,0.14), 0 12px 24px rgba(0,0,0,0.08);
 }
 .project-category-card:nth-child(3):hover {
-  transform: translate(-10px, 10px) scale(1.08) rotate(0deg);
+  transform: translate(96px, 40px);
   box-shadow: 0 32px 64px rgba(0,0,0,0.14), 0 12px 24px rgba(0,0,0,0.08);
 }
-
-/* 悬停时其他卡片保持不变 — 被突出卡片自然遮住即可 */
 
 /* 顶部色块区域 — 图标居中 */
 .project-card-visual {
@@ -1399,50 +1402,50 @@ body {
 /* 响应式 */
 @media (max-width: 960px) {
   .projects-grid {
-    min-height: 420px;
+    min-height: 360px;
     padding: 1.5rem 0;
   }
   .project-category-card {
     max-width: 90vw;
   }
   .project-category-card:nth-child(1) {
-    transform: translate(0, 0) rotate(-0.5deg);
+    transform: translate(0, 0);
   }
   .project-category-card:nth-child(2) {
-    transform: translate(40px, 30px) rotate(-2deg);
+    transform: translate(36px, 30px);
   }
   .project-category-card:nth-child(3) {
-    transform: translate(80px, 60px) rotate(-3.5deg);
+    transform: translate(72px, 60px);
   }
   .project-category-card:nth-child(1):hover {
-    transform: translate(-50px, -50px) scale(1.06) rotate(0deg);
+    transform: translate(0, -30px);
   }
   .project-category-card:nth-child(2):hover {
-    transform: translate(-25px, -20px) scale(1.06) rotate(0deg);
+    transform: translate(36px, -3px);
   }
   .project-category-card:nth-child(3):hover {
-    transform: translate(-5px, 5px) scale(1.06) rotate(0deg);
+    transform: translate(72px, 30px);
   }
 }
 
 @media (max-width: 640px) {
   .projects-grid {
-    min-height: 380px;
+    min-height: 340px;
   }
   .project-category-card:nth-child(2) {
-    transform: translate(25px, 18px) rotate(-1.5deg);
+    transform: translate(24px, 20px);
   }
   .project-category-card:nth-child(3) {
-    transform: translate(50px, 36px) rotate(-2.5deg);
+    transform: translate(48px, 40px);
   }
   .project-category-card:nth-child(1):hover {
-    transform: translate(-35px, -30px) scale(1.05) rotate(0deg);
+    transform: translate(0, -20px);
   }
   .project-category-card:nth-child(2):hover {
-    transform: translate(-15px, -10px) scale(1.05) rotate(0deg);
+    transform: translate(24px, -2px);
   }
   .project-category-card:nth-child(3):hover {
-    transform: translate(-2px, 2px) scale(1.05) rotate(0deg);
+    transform: translate(48px, 20px);
   }
 }
 

@@ -1205,16 +1205,14 @@ body {
 /* ========== 项目经历 - 一级页面 ========== */
 /* ========== 项目分类网格 — Pentagram 直排架构 ========== */
 /* ========== Display Cards 堆叠卡片风格 — 一级页面 ========== */
-/* 核心策略：使用 CSS 3D translateZ 控制层叠顺序，彻底移除 z-index 切换 */
+/* 根治抽搐：固定z-index，hover时不改变；非hover卡片仅opacity变化 */
 .projects-grid {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-areas: "stack";
   place-items: center;
-  min-height: 440px;
-  padding: 2rem 0;
-  perspective: 2000px;
-  transform-style: preserve-3d;
+  min-height: 480px;
+  padding: 2.5rem 0;
 }
 
 /* 堆叠卡片基础样式 */
@@ -1230,24 +1228,27 @@ body {
   flex-direction: column;
   width: 100%;
   max-width: 520px;
-  transition: transform 0.55s cubic-bezier(0.23, 1, 0.32, 1),
-              opacity 0.5s ease,
-              box-shadow 0.5s ease;
-  will-change: transform, opacity;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1),
+              opacity 0.45s ease,
+              box-shadow 0.45s ease;
+  will-change: transform;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.05);
 }
 
-/* 堆叠层次感 — 三张卡片偏移（translate3d Z轴控制层叠，无z-index） */
+/* 固定层叠顺序 — z-index永不在hover时变化 */
+.project-category-card:nth-child(1) { z-index: 3; }
+.project-category-card:nth-child(2) { z-index: 2; }
+.project-category-card:nth-child(3) { z-index: 1; }
+
+/* 堆叠层次感 — 大间距+轻微倾角，参考图中扇形展开 */
 .project-category-card:nth-child(1) {
-  transform: translate3d(0, 0, 30px);
+  transform: translate(0, 0) rotate(-0.5deg);
 }
 .project-category-card:nth-child(2) {
-  transform: translate3d(55px, 40px, 20px);
+  transform: translate(85px, 55px) rotate(-2.5deg);
 }
 .project-category-card:nth-child(3) {
-  transform: translate3d(110px, 80px, 10px);
+  transform: translate(170px, 110px) rotate(-4.5deg);
 }
 
 /* 灰度遮罩层 */
@@ -1256,9 +1257,9 @@ body {
   position: absolute;
   inset: 0;
   background: var(--ground);
-  opacity: 0.18;
+  opacity: 0.15;
   z-index: 1;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.45s ease;
   pointer-events: none;
   border-radius: 16px;
 }
@@ -1268,22 +1269,15 @@ body {
   opacity: 0;
 }
 
-/* 悬停出列效果 — 向上+向右跳出堆叠，Z轴大幅提升至最前 */
+/* 悬停出列 — 向上+向右跳出，仅被hover卡片动 */
 .project-category-card:hover {
-  transform: translate3d(20px, -55px, 80px) scale(1.04);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.12), 0 10px 20px rgba(0,0,0,0.08);
+  transform: translate(25px, -60px) scale(1.04) rotate(0deg);
+  box-shadow: 0 32px 64px rgba(0,0,0,0.14), 0 12px 24px rgba(0,0,0,0.08);
 }
 
-/* 悬停时其他卡片退后 — 统一选择器，无需逐张定义 */
+/* 悬停时其他卡片仅变透明 — 不动transform，彻底消除抽搐 */
 .projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover) {
-  opacity: 0.35;
-  transform: translate3d(55px, 40px, 5px) scale(0.96);
-}
-.projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover):nth-child(1) {
-  transform: translate3d(0, 0, 5px) scale(0.96);
-}
-.projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover):nth-child(3) {
-  transform: translate3d(110px, 80px, 5px) scale(0.96);
+  opacity: 0.25;
 }
 
 /* 顶部色块区域 — 图标居中 */
@@ -1401,54 +1395,41 @@ body {
 /* 响应式 */
 @media (max-width: 960px) {
   .projects-grid {
-    min-height: 400px;
+    min-height: 420px;
     padding: 1.5rem 0;
   }
   .project-category-card {
     max-width: 90vw;
   }
   .project-category-card:nth-child(1) {
-    transform: translate3d(0, 0, 30px);
+    transform: translate(0, 0) rotate(-0.5deg);
   }
   .project-category-card:nth-child(2) {
-    transform: translate3d(25px, 20px, 20px);
+    transform: translate(40px, 30px) rotate(-2deg);
   }
   .project-category-card:nth-child(3) {
-    transform: translate3d(50px, 40px, 10px);
+    transform: translate(80px, 60px) rotate(-3.5deg);
   }
   .project-category-card:hover {
-    transform: translate3d(10px, -35px, 80px) scale(1.03);
+    transform: translate(15px, -40px) scale(1.03) rotate(0deg);
   }
   .projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover) {
-    opacity: 0.35;
-    transform: translate3d(25px, 20px, 5px) scale(0.96);
-  }
-  .projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover):nth-child(1) {
-    transform: translate3d(0, 0, 5px) scale(0.96);
-  }
-  .projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover):nth-child(3) {
-    transform: translate3d(50px, 40px, 5px) scale(0.96);
+    opacity: 0.25;
   }
 }
 
 @media (max-width: 640px) {
   .projects-grid {
-    min-height: 360px;
+    min-height: 380px;
   }
   .project-category-card:nth-child(2) {
-    transform: translate3d(15px, 12px, 20px);
+    transform: translate(25px, 18px) rotate(-1.5deg);
   }
   .project-category-card:nth-child(3) {
-    transform: translate3d(30px, 24px, 10px);
+    transform: translate(50px, 36px) rotate(-2.5deg);
   }
   .project-category-card:hover {
-    transform: translate3d(5px, -25px, 80px) scale(1.03);
-  }
-  .projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover):nth-child(2) {
-    transform: translate3d(15px, 12px, 5px) scale(0.96);
-  }
-  .projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover):nth-child(3) {
-    transform: translate3d(30px, 24px, 5px) scale(0.96);
+    transform: translate(10px, -25px) scale(1.03) rotate(0deg);
   }
 }
 

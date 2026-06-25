@@ -1205,13 +1205,16 @@ body {
 /* ========== 项目经历 - 一级页面 ========== */
 /* ========== 项目分类网格 — Pentagram 直排架构 ========== */
 /* ========== Display Cards 堆叠卡片风格 — 一级页面 ========== */
+/* 核心策略：使用 CSS 3D translateZ 控制层叠顺序，彻底移除 z-index 切换 */
 .projects-grid {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-areas: "stack";
   place-items: center;
-  min-height: 420px;
+  min-height: 440px;
   padding: 2rem 0;
+  perspective: 2000px;
+  transform-style: preserve-3d;
 }
 
 /* 堆叠卡片基础样式 */
@@ -1227,24 +1230,24 @@ body {
   flex-direction: column;
   width: 100%;
   max-width: 520px;
-  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
-              filter 0.5s ease,
-              opacity 0.5s ease;
-  will-change: transform, filter;
+  transition: transform 0.55s cubic-bezier(0.23, 1, 0.32, 1),
+              opacity 0.5s ease,
+              box-shadow 0.5s ease;
+  will-change: transform, opacity;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
 }
 
-/* 堆叠层次感 — 三张卡片偏移 */
+/* 堆叠层次感 — 三张卡片偏移（translate3d Z轴控制层叠，无z-index） */
 .project-category-card:nth-child(1) {
-  transform: translate(0, 0);
-  z-index: 3;
+  transform: translate3d(0, 0, 30px);
 }
 .project-category-card:nth-child(2) {
-  transform: translate(40px, 30px);
-  z-index: 2;
+  transform: translate3d(55px, 40px, 20px);
 }
 .project-category-card:nth-child(3) {
-  transform: translate(80px, 60px);
-  z-index: 1;
+  transform: translate3d(110px, 80px, 10px);
 }
 
 /* 灰度遮罩层 */
@@ -1253,8 +1256,8 @@ body {
   position: absolute;
   inset: 0;
   background: var(--ground);
-  opacity: 0.2;
-  z-index: 5;
+  opacity: 0.18;
+  z-index: 1;
   transition: opacity 0.5s ease;
   pointer-events: none;
   border-radius: 16px;
@@ -1265,28 +1268,22 @@ body {
   opacity: 0;
 }
 
-/* 悬停上浮效果 */
+/* 悬停出列效果 — 向上+向右跳出堆叠，Z轴大幅提升至最前 */
 .project-category-card:hover {
-  transform: translate(0, -20px) scale(1.02);
-  filter: grayscale(0);
-  z-index: 10;
+  transform: translate3d(20px, -55px, 80px) scale(1.04);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.12), 0 10px 20px rgba(0,0,0,0.08);
 }
 
-/* 悬停时其他卡片推后 */
-.projects-grid:has(.project-category-card:nth-child(1):hover) .project-category-card:nth-child(2),
-.projects-grid:has(.project-category-card:nth-child(1):hover) .project-category-card:nth-child(3) {
-  transform: translate(40px, 30px) scale(0.97);
-  opacity: 0.75;
+/* 悬停时其他卡片退后 — 统一选择器，无需逐张定义 */
+.projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover) {
+  opacity: 0.35;
+  transform: translate3d(55px, 40px, 5px) scale(0.96);
 }
-.projects-grid:has(.project-category-card:nth-child(2):hover) .project-category-card:nth-child(1),
-.projects-grid:has(.project-category-card:nth-child(2):hover) .project-category-card:nth-child(3) {
-  transform: translate(0, 0) scale(0.97);
-  opacity: 0.75;
+.projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover):nth-child(1) {
+  transform: translate3d(0, 0, 5px) scale(0.96);
 }
-.projects-grid:has(.project-category-card:nth-child(3):hover) .project-category-card:nth-child(1),
-.projects-grid:has(.project-category-card:nth-child(3):hover) .project-category-card:nth-child(2) {
-  transform: translate(40px, 30px) scale(0.97);
-  opacity: 0.75;
+.projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover):nth-child(3) {
+  transform: translate3d(110px, 80px, 5px) scale(0.96);
 }
 
 /* 顶部色块区域 — 图标居中 */
@@ -1404,35 +1401,54 @@ body {
 /* 响应式 */
 @media (max-width: 960px) {
   .projects-grid {
-    min-height: 380px;
+    min-height: 400px;
     padding: 1.5rem 0;
   }
   .project-category-card {
     max-width: 90vw;
   }
   .project-category-card:nth-child(1) {
-    transform: translate(0, 0);
+    transform: translate3d(0, 0, 30px);
   }
   .project-category-card:nth-child(2) {
-    transform: translate(20px, 20px);
+    transform: translate3d(25px, 20px, 20px);
   }
   .project-category-card:nth-child(3) {
-    transform: translate(40px, 40px);
+    transform: translate3d(50px, 40px, 10px);
   }
   .project-category-card:hover {
-    transform: translate(0, -15px) scale(1.02);
+    transform: translate3d(10px, -35px, 80px) scale(1.03);
+  }
+  .projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover) {
+    opacity: 0.35;
+    transform: translate3d(25px, 20px, 5px) scale(0.96);
+  }
+  .projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover):nth-child(1) {
+    transform: translate3d(0, 0, 5px) scale(0.96);
+  }
+  .projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover):nth-child(3) {
+    transform: translate3d(50px, 40px, 5px) scale(0.96);
   }
 }
 
 @media (max-width: 640px) {
   .projects-grid {
-    min-height: 340px;
+    min-height: 360px;
   }
   .project-category-card:nth-child(2) {
-    transform: translate(12px, 12px);
+    transform: translate3d(15px, 12px, 20px);
   }
   .project-category-card:nth-child(3) {
-    transform: translate(24px, 24px);
+    transform: translate3d(30px, 24px, 10px);
+  }
+  .project-category-card:hover {
+    transform: translate3d(5px, -25px, 80px) scale(1.03);
+  }
+  .projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover):nth-child(2) {
+    transform: translate3d(15px, 12px, 5px) scale(0.96);
+  }
+  .projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover):nth-child(3) {
+    transform: translate3d(30px, 24px, 5px) scale(0.96);
   }
 }
 
@@ -1470,7 +1486,7 @@ body {
   border-radius: 20px 0 0 20px;
   transform: translateX(100%);
   opacity: 1;
-  transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
   box-shadow: -20px 0 60px rgba(0,0,0,0.15);
   border-left: 1.5px solid var(--border);
@@ -1480,6 +1496,24 @@ body {
 .project-overlay.active .project-panel {
   transform: translateX(0);
 }
+
+/* Stagger 进入动画 — panel 内容依次浮现 */
+.project-panel > * {
+  opacity: 0;
+  transform: translateX(16px);
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.project-overlay.active .project-panel > * {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.project-overlay.active .project-panel > *:nth-child(1) { transition-delay: 0.12s; }
+.project-overlay.active .project-panel > *:nth-child(2) { transition-delay: 0.18s; }
+.project-overlay.active .project-panel > *:nth-child(3) { transition-delay: 0.24s; }
+.project-overlay.active .project-panel > *:nth-child(4) { transition-delay: 0.30s; }
+.project-overlay.active .project-panel > *:nth-child(5) { transition-delay: 0.36s; }
 
 .project-panel::-webkit-scrollbar {
   width: 4px;
@@ -1536,6 +1570,24 @@ body {
   padding: 0;
 }
 
+/* panel-body 内子元素 stagger */
+.project-panel-body > * {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.project-overlay.active .project-panel-body > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.project-overlay.active .project-panel-body > *:nth-child(1) { transition-delay: 0.18s; }
+.project-overlay.active .project-panel-body > *:nth-child(2) { transition-delay: 0.24s; }
+.project-overlay.active .project-panel-body > *:nth-child(3) { transition-delay: 0.30s; }
+.project-overlay.active .project-panel-body > *:nth-child(4) { transition-delay: 0.36s; }
+.project-overlay.active .project-panel-body > *:nth-child(5) { transition-delay: 0.42s; }
+
 /* 分类组标题 */
 .project-category-group {
   border-bottom: 1.5px solid var(--border);
@@ -1591,11 +1643,11 @@ body {
   transform: rotate(180deg);
 }
 
-/* 分类下的项目列表 */
+/* ========== Display Cards 衍生 — 二级页面列表项（扑克牌展开+出列） ========== */
 .category-projects {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.4s ease;
+  transition: max-height 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   background: var(--card);
 }
 
@@ -1603,7 +1655,12 @@ body {
   max-height: 800px;
 }
 
-/* ========== Display Cards 风格 — 二级页面列表项 ========== */
+/* 展开时 stagger 进入 */
+.category-projects.expanded .category-project-item {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 .category-project-item {
   margin: 0.5rem 1.5rem;
   padding: 1rem 1.25rem;
@@ -1614,15 +1671,33 @@ body {
   background: var(--ground);
   border: 1.5px solid var(--border);
   border-radius: 12px;
-  transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1),
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
               background 0.3s ease,
-              box-shadow 0.3s ease;
+              box-shadow 0.3s ease,
+              opacity 0.3s ease;
+  opacity: 0.85;
 }
 
+/* 扑克牌展开 — 递增左边距 */
+.category-project-item:nth-child(1) { margin-left: 1.5rem; }
+.category-project-item:nth-child(2) { margin-left: 1.75rem; }
+.category-project-item:nth-child(3) { margin-left: 2rem; }
+.category-project-item:nth-child(4) { margin-left: 2.25rem; }
+.category-project-item:nth-child(5) { margin-left: 2.5rem; }
+.category-project-item:nth-child(6) { margin-left: 2.75rem; }
+
+/* 悬停出列 — 向右跳出，其他卡片退后 */
 .category-project-item:hover {
   background: var(--card);
-  transform: translateX(8px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  transform: translateX(16px) scale(1.02);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  opacity: 1;
+}
+
+/* 同组内其他项目退后 */
+.category-projects:has(.category-project-item:hover) .category-project-item:not(:hover) {
+  opacity: 0.45;
+  transform: translateX(-4px) scale(0.98);
 }
 
 .category-project-index {
@@ -1651,7 +1726,7 @@ body {
   letter-spacing: 0.1em;
 }
 
-/* 简单项目列表（无子分类） — Display Cards 风格 */
+/* 简单项目列表（无子分类） — Display Cards 衍生 */
 .project-simple-list {
   padding: 0.5rem 0;
 }
@@ -1666,15 +1741,32 @@ body {
   background: var(--ground);
   border: 1.5px solid var(--border);
   border-radius: 12px;
-  transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1),
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
               background 0.3s ease,
-              box-shadow 0.3s ease;
+              box-shadow 0.3s ease,
+              opacity 0.3s ease;
+  opacity: 0.85;
 }
+
+/* 扑克牌展开 — 递增左边距 */
+.project-simple-item:nth-child(1) { margin-left: 1.5rem; }
+.project-simple-item:nth-child(2) { margin-left: 1.75rem; }
+.project-simple-item:nth-child(3) { margin-left: 2rem; }
+.project-simple-item:nth-child(4) { margin-left: 2.25rem; }
+.project-simple-item:nth-child(5) { margin-left: 2.5rem; }
+.project-simple-item:nth-child(6) { margin-left: 2.75rem; }
 
 .project-simple-item:hover {
   background: var(--card);
-  transform: translateX(8px);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  transform: translateX(16px) scale(1.02);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  opacity: 1;
+}
+
+/* 同列表内其他项目退后 */
+.project-simple-list:has(.project-simple-item:hover) .project-simple-item:not(:hover) {
+  opacity: 0.45;
+  transform: translateX(-4px) scale(0.98);
 }
 
 .project-simple-index {
@@ -1713,22 +1805,22 @@ body {
   }
 }
 
-/* ========== 模态框（三级） — Pentagram 架构 ========== */
+/* ========== 模态框（三级） — Display Cards 衍生 ========== */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(17, 17, 17, 0.6);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  background: rgba(17, 17, 17, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   z-index: 3000;
   display: none;
   justify-content: flex-end;
   align-items: stretch;
   opacity: 0;
-  transition: opacity 0.35s ease;
+  transition: opacity 0.4s ease;
 }
 
 .modal-overlay.active {
@@ -1744,7 +1836,7 @@ body {
   overflow-y: auto;
   border-radius: 20px 0 0 20px;
   transform: translateX(100%);
-  transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
   position: relative;
   border-left: 1.5px solid var(--border);
   box-shadow: -20px 0 60px rgba(0,0,0,0.15);
@@ -1753,6 +1845,25 @@ body {
 .modal-overlay.active .modal-content {
   transform: translateX(0);
 }
+
+/* Stagger 进入动画 — modal 内容依次浮现 */
+.modal-content > * {
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.modal-overlay.active .modal-content > * {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.modal-overlay.active .modal-content > *:nth-child(1) { transition-delay: 0.15s; }
+.modal-overlay.active .modal-content > *:nth-child(2) { transition-delay: 0.22s; }
+.modal-overlay.active .modal-content > *:nth-child(3) { transition-delay: 0.29s; }
+.modal-overlay.active .modal-content > *:nth-child(4) { transition-delay: 0.36s; }
+.modal-overlay.active .modal-content > *:nth-child(5) { transition-delay: 0.43s; }
+.modal-overlay.active .modal-content > *:nth-child(6) { transition-delay: 0.50s; }
 
 .modal-header {
   padding: 2rem 2rem 1.5rem;
@@ -1809,6 +1920,12 @@ body {
   border-radius: 0;
   aspect-ratio: 16/9;
   pointer-events: auto;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* 视频容器 hover 缩放 */
+.modal-body:has(.modal-video-full) .modal-video-full:hover {
+  transform: scale(1.02);
 }
 
 .modal-video-full.portrait {
@@ -1874,6 +1991,7 @@ body {
 .video-grid-3col .video-wrapper {
   position: relative;
   background: #000;
+  overflow: hidden;
 }
 
 .video-grid-3col video {
@@ -1881,6 +1999,11 @@ body {
   display: block;
   border-radius: 0;
   background: #000;
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.video-wrapper:hover video {
+  transform: scale(1.04);
 }
 
 .video-label {
@@ -1929,6 +2052,24 @@ body {
   font-weight: 600;
   color: var(--ink);
 }
+
+/* modal-body 内子元素 stagger */
+.modal-body > * {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.modal-overlay.active .modal-body > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.modal-overlay.active .modal-body > *:nth-child(1) { transition-delay: 0.25s; }
+.modal-overlay.active .modal-body > *:nth-child(2) { transition-delay: 0.32s; }
+.modal-overlay.active .modal-body > *:nth-child(3) { transition-delay: 0.39s; }
+.modal-overlay.active .modal-body > *:nth-child(4) { transition-delay: 0.46s; }
+.modal-overlay.active .modal-body > *:nth-child(5) { transition-delay: 0.53s; }
 
 /* 响应式 */
 @media (max-width: 768px) {

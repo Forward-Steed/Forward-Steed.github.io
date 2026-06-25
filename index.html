@@ -1214,7 +1214,7 @@ body {
   padding: 2.5rem 0;
 }
 
-/* 堆叠卡片基础样式 */
+/* 堆叠卡片基础样式 — 调小尺寸 */
 .project-category-card {
   grid-area: stack;
   background: var(--card);
@@ -1226,7 +1226,7 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 520px;
+  max-width: 420px;
   transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1),
               filter 0.7s ease,
               box-shadow 0.7s ease;
@@ -1236,19 +1236,15 @@ body {
   filter: grayscale(100%);
 }
 
-/* hover时置顶 */
-.project-category-card { z-index: 1; }
-.project-category-card:hover { z-index: 10; }
-
-/* 堆叠层次感 — 官方参数: translate-x-12/y-10, translate-x-24/y-20 */
+/* 堆叠层次感 — 调小偏移量适配更小的卡片 */
 .project-category-card:nth-child(1) {
   transform: translate(0, 0);
 }
 .project-category-card:nth-child(2) {
-  transform: translate(48px, 40px);
+  transform: translate(36px, 30px);
 }
 .project-category-card:nth-child(3) {
-  transform: translate(96px, 80px);
+  transform: translate(72px, 60px);
 }
 
 /* 遮罩层 — 官方参数: bg-background/50 + blend-overlay */
@@ -1273,17 +1269,17 @@ body {
   filter: grayscale(0%);
 }
 
-/* 悬停出列 — 官方参数: -translate-y-10, -translate-y-1, translate-y-10 */
+/* 悬停出列 — 只向上移动，X轴保持默认偏移 */
 .project-category-card:nth-child(1):hover {
-  transform: translate(0, -40px);
+  transform: translate(0, -30px);
   box-shadow: 0 32px 64px rgba(0,0,0,0.14), 0 12px 24px rgba(0,0,0,0.08);
 }
 .project-category-card:nth-child(2):hover {
-  transform: translate(48px, -4px);
+  transform: translate(36px, -30px);
   box-shadow: 0 32px 64px rgba(0,0,0,0.14), 0 12px 24px rgba(0,0,0,0.08);
 }
 .project-category-card:nth-child(3):hover {
-  transform: translate(96px, 40px);
+  transform: translate(72px, -30px);
   box-shadow: 0 32px 64px rgba(0,0,0,0.14), 0 12px 24px rgba(0,0,0,0.08);
 }
 
@@ -1418,19 +1414,19 @@ body {
     transform: translate(72px, 60px);
   }
   .project-category-card:nth-child(1):hover {
-    transform: translate(0, -30px);
+    transform: translate(0, -24px);
   }
   .project-category-card:nth-child(2):hover {
-    transform: translate(36px, -3px);
+    transform: translate(36px, -24px);
   }
   .project-category-card:nth-child(3):hover {
-    transform: translate(72px, 30px);
+    transform: translate(72px, -24px);
   }
 }
 
 @media (max-width: 640px) {
   .projects-grid {
-    min-height: 340px;
+    min-height: 300px;
   }
   .project-category-card:nth-child(2) {
     transform: translate(24px, 20px);
@@ -1439,13 +1435,13 @@ body {
     transform: translate(48px, 40px);
   }
   .project-category-card:nth-child(1):hover {
-    transform: translate(0, -20px);
+    transform: translate(0, -16px);
   }
   .project-category-card:nth-child(2):hover {
-    transform: translate(24px, -2px);
+    transform: translate(24px, -16px);
   }
   .project-category-card:nth-child(3):hover {
-    transform: translate(48px, 20px);
+    transform: translate(48px, -16px);
   }
 }
 

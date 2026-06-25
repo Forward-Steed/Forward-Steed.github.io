@@ -1283,10 +1283,7 @@ body {
   box-shadow: 0 32px 64px rgba(0,0,0,0.14), 0 12px 24px rgba(0,0,0,0.08);
 }
 
-/* 悬停时其他卡片仅变透明 — 不动transform，彻底消除抽搐 */
-.projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover) {
-  opacity: 0.25;
-}
+/* 悬停时其他卡片保持不变 — 被突出卡片自然遮住即可 */
 
 /* 顶部色块区域 — 图标居中 */
 .project-card-visual {

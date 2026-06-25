@@ -3625,115 +3625,6 @@ body {
     font-size: 0.55rem;
   }
 }
-
-/* ========== Aceternity Lamp 滚动交互背景效果 ========== */
-.lamp-wrapper {
-  position: relative;
-  overflow: visible;
-  background: #0a0a0a;
-}
-
-/* lamp-wrapper 内的 section 使用深色适配 */
-.lamp-wrapper .section {
-  color: #e0e0e0;
-}
-
-.lamp-wrapper .section-header .section-title,
-.lamp-wrapper .section-header .section-number {
-  color: #ffffff;
-}
-
-.lamp-wrapper .section-divider {
-  border-color: rgba(255,255,255,0.15);
-}
-
-.lamp-container {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  max-width: 900px;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* 灯带 — 顶部水平发光细线 */
-.lamp {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60%;
-  max-width: 540px;
-  height: 3px;
-  border-radius: 50%;
-  background: #00d4ff;
-  box-shadow:
-    0 0 4px 1px rgba(0, 212, 255, 0.9),
-    0 0 12px 3px rgba(0, 212, 255, 0.5),
-    0 0 30px 8px rgba(0, 212, 255, 0.25),
-    0 -1px 20px 6px rgba(0, 212, 255, 0.15);
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
-
-/* 锥形光束 — 从灯带向下扩散 */
-.lamp-beam {
-  position: absolute;
-  top: 3px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  /* 用 border 模拟锥形光束基础轮廓 */
-  border-left: 280px solid transparent;
-  border-right: 280px solid transparent;
-  border-top: 900px solid rgba(0, 212, 255, 0.06);
-  filter: blur(40px);
-  opacity: 0;
-  transition: opacity 0.8s ease;
-}
-
-/* 额外柔和辉光层 — 增强光束中心亮度 */
-.lamp-glow {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2px;
-  height: 600px;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 212, 255, 0.35) 0%,
-    rgba(0, 212, 255, 0.12) 30%,
-    rgba(0, 212, 255, 0.04) 60%,
-    transparent 100%
-  );
-  filter: blur(18px);
-  opacity: 0;
-  transition: opacity 0.8s ease;
-}
-
-/* 径向辉光 — 灯带处的柔和光晕 */
-.lamp-halo {
-  position: absolute;
-  top: -20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 400px;
-  height: 60px;
-  background: radial-gradient(
-    ellipse 50% 50% at 50% 50%,
-    rgba(0, 212, 255, 0.18) 0%,
-    rgba(0, 212, 255, 0.06) 40%,
-    transparent 70%
-  );
-  filter: blur(12px);
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
 </style>
 </head>
 <body>
@@ -3838,15 +3729,6 @@ body {
     </div>
   </div>
 </section>
-
-<!-- Lamp 滚动交互背景 — 从 education 到 guestbook -->
-<div class="lamp-wrapper" id="lampWrapper">
-  <div class="lamp-container" id="lampContainer">
-    <div class="lamp" id="lampStrip"></div>
-    <div class="lamp-beam" id="lampBeam"></div>
-    <div class="lamp-glow" id="lampGlow"></div>
-    <div class="lamp-halo" id="lampHalo"></div>
-  </div>
 
 <section class="section" id="education">
   <div class="section-header reveal">
@@ -4001,7 +3883,6 @@ body {
     </div>
   </div>
 </section>
-
 
 <section class="section" id="honors">
   <div class="section-header reveal">
@@ -4283,7 +4164,6 @@ body {
     </div>
   </div>
 </section>
-</div><!-- /lamp-wrapper -->
 
 <footer class="footer">
   &copy; 2025 李嘉豪. 保留所有权利。
@@ -5131,13 +5011,21 @@ function loadLazyVideo(placeholder) {
   var video = document.getElementById(videoId);
   if (!video) return;
 
-  // 创建source元素并加载视频
-  video.innerHTML = '<source src="' + videoSrc + '" type="video/mp4">';
-  video.style.display = '';
+  // 直接设置 src 属性加载视频（比 innerHTML + source 更可靠地保留音频轨道）
+  video.removeAttribute('src');
+  video.innerHTML = '';
+  video.src = videoSrc;
   video.load();
 
-  // 隐藏占位符
+  // 确保音频轨道可用
+  video.addEventListener('loadedmetadata', function() {
+    video.muted = false;
+    video.volume = 1;
+  }, { once: true });
+
+  // 隐藏占位符，显示视频
   placeholder.style.display = 'none';
+  video.style.display = '';
 }
 
 function closeModal(event) {
@@ -5336,104 +5224,6 @@ document.addEventListener('keydown', function(e) {
   // Ctrl+Shift+C（元素选择）
   if (e.ctrlKey && e.shiftKey && e.key === 'C') { e.preventDefault(); }
 });
-
-// ========== Aceternity Lamp 滚动交互控制 ==========
-(function() {
-  var wrapper = document.getElementById('lampWrapper');
-  var container = document.getElementById('lampContainer');
-  var strip = document.getElementById('lampStrip');
-  var beam = document.getElementById('lampBeam');
-  var glow = document.getElementById('lampGlow');
-  var halo = document.getElementById('lampHalo');
-  if (!wrapper || !strip) return;
-
-  var lampVisible = false;
-  var ticking = false;
-
-  // 计算 lamp 元素在视口中的可见比例 (0~1)
-  function getLampVisibility() {
-    var rect = wrapper.getBoundingClientRect();
-    var viewH = window.innerHeight;
-    if (rect.bottom <= 0 || rect.top >= viewH) return 0;
-    var visibleTop = Math.max(0, rect.top);
-    var visibleBottom = Math.min(viewH, rect.bottom);
-    var visibleH = visibleBottom - visibleTop;
-    return Math.min(1, visibleH / (viewH * 0.4)); // 视口40%高度即可全亮
-  }
-
-  // 更新 lamp 的视觉状态
-  function updateLamp() {
-    var vis = getLampVisibility();
-
-    if (vis <= 0) {
-      // 完全不可见 — 渐隐
-      if (lampVisible) {
-        strip.style.opacity = '0';
-        beam.style.opacity = '0';
-        glow.style.opacity = '0';
-        halo.style.opacity = '0';
-        lampVisible = false;
-      }
-      return;
-    }
-
-    lampVisible = true;
-
-    // 根据可见度计算灯带亮度
-    var stripOpacity = Math.min(1, vis * 1.8);
-    strip.style.opacity = stripOpacity.toFixed(3);
-
-    // 光束和辉光也跟随可见度
-    var beamOpacity = Math.min(1, vis * 1.4);
-    beam.style.opacity = beamOpacity.toFixed(3);
-    glow.style.opacity = (beamOpacity * 0.9).toFixed(3);
-    halo.style.opacity = (beamOpacity * 0.85).toFixed(3);
-
-    // 微妙脉动：基于滚动位置的亮度变化
-    var rect = wrapper.getBoundingClientRect();
-    var viewH = window.innerHeight;
-    var progress = 1 - (rect.top / viewH); // 0(刚进入) → 1(滚过)
-    var pulse = 0.85 + 0.15 * Math.sin(progress * Math.PI); // 中间最亮
-    var finalBeam = beamOpacity * pulse;
-    beam.style.opacity = finalBeam.toFixed(3);
-    glow.style.opacity = (finalBeam * 0.9).toFixed(3);
-
-    // 光束宽度随滚动微妙变化（±10%）
-    var scale = 1 + 0.1 * Math.sin(progress * Math.PI);
-    beam.style.transform = 'translateX(-50%) scaleX(' + scale.toFixed(3) + ')';
-  }
-
-  // IntersectionObserver — 首次进入视口时启动更新
-  var observer = new IntersectionObserver(function(entries) {
-    entries.forEach(function(entry) {
-      if (entry.isIntersecting) {
-        updateLamp();
-      } else {
-        strip.style.opacity = '0';
-        beam.style.opacity = '0';
-        glow.style.opacity = '0';
-        halo.style.opacity = '0';
-        lampVisible = false;
-      }
-    });
-  }, {
-    root: null,
-    rootMargin: '-10% 0px -10% 0px',
-    threshold: [0, 0.1, 0.25, 0.5, 0.75, 1]
-  });
-  observer.observe(wrapper);
-
-  // scroll 事件 — 节流更新
-  window.addEventListener('scroll', function() {
-    if (!ticking) {
-      requestAnimationFrame(function() {
-        updateLamp();
-        ticking = false;
-      });
-      ticking = true;
-    }
-  }, { passive: true });
-})();
 </script>
 </body>
 </html>

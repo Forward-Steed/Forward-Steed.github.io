@@ -1269,17 +1269,17 @@ body {
   opacity: 0;
 }
 
-/* 悬停出列 — 向左侧（左上）跳出，每个卡片独立位移 */
+/* 悬停出列 — 大幅向左上方跳出堆叠，完全可见 */
 .project-category-card:nth-child(1):hover {
-  transform: translate(-20px, -50px) scale(1.04) rotate(0deg);
+  transform: translate(-70px, -70px) scale(1.08) rotate(0deg);
   box-shadow: 0 32px 64px rgba(0,0,0,0.14), 0 12px 24px rgba(0,0,0,0.08);
 }
 .project-category-card:nth-child(2):hover {
-  transform: translate(55px, 5px) scale(1.04) rotate(0deg);
+  transform: translate(-35px, -30px) scale(1.08) rotate(0deg);
   box-shadow: 0 32px 64px rgba(0,0,0,0.14), 0 12px 24px rgba(0,0,0,0.08);
 }
 .project-category-card:nth-child(3):hover {
-  transform: translate(140px, 60px) scale(1.04) rotate(0deg);
+  transform: translate(-10px, 10px) scale(1.08) rotate(0deg);
   box-shadow: 0 32px 64px rgba(0,0,0,0.14), 0 12px 24px rgba(0,0,0,0.08);
 }
 
@@ -1416,16 +1416,13 @@ body {
     transform: translate(80px, 60px) rotate(-3.5deg);
   }
   .project-category-card:nth-child(1):hover {
-    transform: translate(-15px, -35px) scale(1.03) rotate(0deg);
+    transform: translate(-50px, -50px) scale(1.06) rotate(0deg);
   }
   .project-category-card:nth-child(2):hover {
-    transform: translate(25px, -5px) scale(1.03) rotate(0deg);
+    transform: translate(-25px, -20px) scale(1.06) rotate(0deg);
   }
   .project-category-card:nth-child(3):hover {
-    transform: translate(65px, 25px) scale(1.03) rotate(0deg);
-  }
-  .projects-grid:has(.project-category-card:hover) .project-category-card:not(:hover) {
-    opacity: 0.25;
+    transform: translate(-5px, 5px) scale(1.06) rotate(0deg);
   }
 }
 
@@ -1440,13 +1437,13 @@ body {
     transform: translate(50px, 36px) rotate(-2.5deg);
   }
   .project-category-card:nth-child(1):hover {
-    transform: translate(-10px, -20px) scale(1.03) rotate(0deg);
+    transform: translate(-35px, -30px) scale(1.05) rotate(0deg);
   }
   .project-category-card:nth-child(2):hover {
-    transform: translate(15px, -2px) scale(1.03) rotate(0deg);
+    transform: translate(-15px, -10px) scale(1.05) rotate(0deg);
   }
   .project-category-card:nth-child(3):hover {
-    transform: translate(40px, 16px) scale(1.03) rotate(0deg);
+    transform: translate(-2px, 2px) scale(1.05) rotate(0deg);
   }
 }
 
